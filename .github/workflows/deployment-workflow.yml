@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENVIRONMENT: ${{ inputs.environment }}
-      IMAGE: ${{ inputs.image_tag }}
+      DockerImageName: todoapp
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -48,7 +48,7 @@ jobs:
             --namespace todoapp-${{ env.ENVIRONMENT }} \
             --create-namespace \
             --set image.repository=${{ secrets.DOCKERHUB_USERNAME }}/todoapp \
-            --set image.tag=$(${{ inputs.image_tag }} | cut -d ':' -f2) \
+            --set image.tag=$(echo "${{ inputs.image_tag }}" | cut -d':' -f2) \
             --values ./helm-charts/todoapp/values.yaml \
             --atomic \
             --dry-run
@@ -59,6 +59,6 @@ jobs:
             --namespace todoapp-${{ env.ENVIRONMENT }} \
             --create-namespace \
             --set image.repository=${{ secrets.DOCKERHUB_USERNAME }}/todoapp \
-            --set image.tag=$(${{ inputs.image_tag }} | cut -d ':' -f2) \
+            --set image.tag=$(echo "${{ inputs.image_tag }}" | cut -d':' -f2) \
             --values ./helm-charts/todoapp/values.yaml \
             --atomic
