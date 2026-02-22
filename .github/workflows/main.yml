@@ -120,16 +120,21 @@ jobs:
         path: ./*.tgz
 
   deploy-dev:
-    needs: [docker-ci, helm-ci]
+    name: Deploy to Development (Kind)
     uses: ./.github/workflows/deployment-workflow.yml
+    needs: [helm-ci, docker-ci]
+    secrets: inherit
     with:
       environment: development
       image_tag: ${{ github.sha }}
-    secrets: inherit
-  deploy-stg:
-    needs: [docker-ci, helm-ci]
+      helm-release-name: todoapp-dev
+
+  deploy-staging:
+    name: Deploy to Staging (Kind)
     uses: ./.github/workflows/deployment-workflow.yml
-    with:
-      environment: stg
-      image_tag: ${{ github.sha }}
+    needs: deploy-dev
     secrets: inherit
+    with:
+      environment: staging
+      image_tag: ${{ github.sha }}
+      helm-release-name: todoapp-staging
